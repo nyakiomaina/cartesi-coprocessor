@@ -12,18 +12,7 @@ import {BLSSignatureChecker, IRegistryCoordinator} from "@eigenlayer-middleware/
 import {OperatorStateRetriever} from "@eigenlayer-middleware/src/OperatorStateRetriever.sol";
 import {LibMerkle32} from "./LibMerkle32.sol";
 import "@eigenlayer-middleware/src/libraries/BN254.sol";
-
-struct Response {
-    address ruleSet;
-    bytes32 machineHash;
-    bytes32 payloadHash;
-    bytes32 outputMerkle;
-}
-
-interface ICoprocessorCallback {
-    function coprocessorCallbackOutputsOnly(bytes32 machineHash, bytes32 payloadHash, bytes[] calldata outputs)
-        external;
-}
+import "./ICoprocessorCallback.sol";
 
 contract Coprocessor is BLSSignatureChecker, OperatorStateRetriever, Initializable, OwnableUpgradeable {
     using BN254 for BN254.G1Point;
@@ -37,7 +26,7 @@ contract Coprocessor is BLSSignatureChecker, OperatorStateRetriever, Initializab
 
     event TaskIssued(bytes32 machineHash, bytes input, address callback);
 
-    function issueTask(bytes32 machineHash, bytes calldata input, address callback) public {
+    function issueTask(bytes32 machineHash, bytes calldata input, address callback) public virtual {
         emit TaskIssued(machineHash, input, callback);
     }
 
