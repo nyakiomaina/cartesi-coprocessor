@@ -1,38 +1,35 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
-interface IL1CrossDomainMessenger {
-    function sendMessage(
-        address _target,
-        bytes calldata _message,
-        uint32 _gasLimit
-    ) external;
-}
+import "@optimism/contracts/libraries/bridge/IL1CrossDomainMessenger.sol";
 
-interface Coprocessor {
-    function issueTask(bytes32 machineHash, bytes calldata input, address callback) external;
-}
+contract L1Coordinator {
+    IL1CrossDomainMessenger public crossDomainMessenger;
+    address public l2Coprocessor;
 
-contract L1TaskIssuer {
-    address public l1MessengerAddress = 0x25ace71c97B33Cc4729CF772ae268934F7ab5fA1; // L1CrossDomainMessenger address
+    event SolutionSubmitted(bytes32 indexed machineHash, bytes32 responseHash);
 
-    function issueTaskToL2(
-        address l2CoprocessorAddress,
+    constructor(address _crossDomainMessenger) {
+        crossDomainMessenger = IL1CrossDomainMessenger(_crossDomainMessenger);
+    }
+
+    function setL2Coprocessor(address _l2Coprocessor) external {
+        l2Coprocessor = _l2Coprocessor;
+    }
+
+    function submitSolution(
         bytes32 machineHash,
-        bytes calldata input,
-        address callback
+        bytes32 responseHash,
+        uint32 gasLimit
     ) external {
-        bytes memory message = abi.encodeWithSelector(
-            Coprocessor.issueTask.selector,
+        emit SolutionSubmitted(machineHash, responseHash);
+
+        bytes memory message = abi.encodeWithSignature(
+            "storeResponseHash(bytes32,bytes32)",
             machineHash,
-            input,
-            callback
+            responseHash
         );
 
-        IL1CrossDomainMessenger(l1MessengerAddress).sendMessage(
-            l2CoprocessorAddress,
-            message,
-            1000000
-        );
+        crossDomainMessenger.sendMessage(l2Coprocessor, message, gasLimit);
     }
 }
