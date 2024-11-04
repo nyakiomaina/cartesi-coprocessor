@@ -2,15 +2,19 @@
 pragma solidity ^0.8.9;
 
 import "@optimism/contracts/libraries/bridge/IL1CrossDomainMessenger.sol";
+import "./Coprocessor.sol";
 
-contract L1Coordinator {
+contract L1Coprocessor is Coprocessor {
     IL1CrossDomainMessenger public crossDomainMessenger;
     address public l2Coprocessor;
 
     event SolutionSubmitted(bytes32 indexed machineHash, bytes32 responseHash);
 
-    constructor(address _crossDomainMessenger) {
+    constructor(address _crossDomainMessenger, IRegistryCoordinator _registryCoordinator)
+        Coprocessor(_registryCoordinator)
+    {
         crossDomainMessenger = IL1CrossDomainMessenger(_crossDomainMessenger);
+
     }
 
     function setL2Coprocessor(address _l2Coprocessor) external {
