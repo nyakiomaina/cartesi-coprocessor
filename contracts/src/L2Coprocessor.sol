@@ -11,13 +11,8 @@ contract L2Coprocessor is Coprocessor, Ownable {
     IL2CrossDomainMessenger public crossDomainMessenger;
     address public l1Coordinator; // address only authorized to call storeResponseHash
 
-    struct Task {
-        bytes32 responseHash;
-        bool completed;
-    }
-
-    // keep track of the tasks
-    mapping(bytes32 => Task) public tasks;
+    // keep track of the responses
+    mapping(bytes32 => bool) public responses;
 
     // new task issued
     event TaskIssued(bytes32 machineHash, bytes input, address callback);
@@ -48,15 +43,12 @@ contract L2Coprocessor is Coprocessor, Ownable {
     // issue new task
     function issueTask(bytes32 machineHash, bytes calldata input, address callback) public {
         emit TaskIssued(machineHash, input, callback);
-        tasks[machineHash] = Task({responseHash: bytes32(0), completed: false});
     }
 
     // store response hash and this can only be called by the L1Coordinator
     function storeResponseHash(bytes32 machineHash, bytes32 responseHash) external onlyL1Coordinator {
-        Task storage task = tasks[machineHash];
-        require(!task.completed, "Task already completed");
-        task.responseHash = responseHash;
-        task.completed = true;
+        require(!responses[responseHash], "Response already whitelisted");
+        responses[responseHash] = true;
         emit TaskCompleted(machineHash, responseHash);
     }
 
@@ -67,8 +59,7 @@ contract L2Coprocessor is Coprocessor, Ownable {
         bytes[] calldata outputs,
         address callbackAddress
     ) external onlyOwner {
-        Task storage task = tasks[machineHash];
-        require(task.completed, "Task not completed");
+        require(responses[machineHash]);
 
         ICoprocessorCallback(callbackAddress).coprocessorCallbackOutputsOnly(machineHash, payloadHash, outputs);
     }
