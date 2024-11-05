@@ -46,7 +46,7 @@ contract L2Coprocessor is Coprocessor, Ownable {
     }
 
     // issue new task
-    function issueTask(bytes32 machineHash, bytes calldata input, address callback) external onlyOwner {
+    function issueTask(bytes32 machineHash, bytes calldata input, address callback) public {
         emit TaskIssued(machineHash, input, callback);
         tasks[machineHash] = Task({responseHash: bytes32(0), completed: false});
     }
