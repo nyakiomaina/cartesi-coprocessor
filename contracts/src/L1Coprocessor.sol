@@ -41,8 +41,6 @@ contract L1Coprocessor is Coprocessor {
         bytes memory encodedResp = abi.encode(resp);
         bytes32 respHash = keccak256(encodedResp);
 
-        emit SolutionSubmitted(resp.machineHash, resp.payloadHash);
-
         bytes memory message = abi.encodeWithSignature(
             "storeResponseHash(bytes32)",
             respHash
