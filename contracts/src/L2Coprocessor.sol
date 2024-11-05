@@ -20,7 +20,7 @@ contract L2Coprocessor is Coprocessor, Ownable {
     mapping(bytes32 => Task) public tasks;
 
     // new task issued
-    event TaskIssued(bytes32 indexed machineHash, bytes input, address indexed callback);
+    event TaskIssued(bytes32 machineHash, bytes input, address callback);
     event TaskCompleted(bytes32 indexed machineHash, bytes32 responseHash); // task completed
 
     // initialize l2 contract
