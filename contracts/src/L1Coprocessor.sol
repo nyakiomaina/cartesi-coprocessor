@@ -14,24 +14,38 @@ contract L1Coprocessor is Coprocessor {
         Coprocessor(_registryCoordinator)
     {
         crossDomainMessenger = IL1CrossDomainMessenger(_crossDomainMessenger);
-
     }
 
-    function setL2Coprocessor(address _l2Coprocessor) external {
+    function setL2Coprocessor(address _l2Coprocessor) external onlyOwner {
         l2Coprocessor = _l2Coprocessor;
     }
 
-    function submitSolution(
-        bytes32 machineHash,
-        bytes32 responseHash,
+    function solverCallbackSendToL2(
+        Response calldata resp,
+        bytes calldata quorumNumbers,
+        uint32 quorumThresholdPercentage,
+        uint8 thresholdDenominator,
+        uint32 blockNumber,
+        NonSignerStakesAndSignature memory nonSignerStakesAndSignature,
         uint32 gasLimit
     ) external {
-        emit SolutionSubmitted(machineHash, responseHash);
+        check(
+            resp,
+            quorumNumbers,
+            quorumThresholdPercentage,
+            thresholdDenominator,
+            blockNumber,
+            nonSignerStakesAndSignature
+        );
+
+        bytes memory encodedResp = abi.encode(resp);
+        bytes32 respHash = keccak256(encodedResp);
+
+        emit SolutionSubmitted(resp.machineHash, resp.payloadHash);
 
         bytes memory message = abi.encodeWithSignature(
-            "storeResponseHash(bytes32,bytes32)",
-            machineHash,
-            responseHash
+            "storeResponseHash(bytes32)",
+            respHash
         );
 
         crossDomainMessenger.sendMessage(l2Coprocessor, message, gasLimit);
