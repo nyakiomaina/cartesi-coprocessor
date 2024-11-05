@@ -46,20 +46,20 @@ contract L2Coprocessor is Coprocessor, Ownable {
     }
 
     // store response hash and this can only be called by the L1Coordinator
-    function storeResponseHash(bytes32 machineHash, bytes32 responseHash) external onlyL1Coordinator {
+    function storeResponseHash(bytes32 responseHash) external onlyL1Coordinator {
         require(!responses[responseHash], "Response already whitelisted");
         responses[responseHash] = true;
-        emit TaskCompleted(machineHash, responseHash);
+        emit TaskCompleted(responseHash);
     }
 
     // can call callback with the provided outputs after the task is completed
     function callbackWithOutputs(
-        address callbackAddress,
+        Response calldata resp,
         bytes[] calldata outputs,
-        Response calldata resp
+        address callbackAddress
     ) public {
-        // bytes32 respHash = keccak256(abi.encode(resp));
-        // require(responses[respHash]);
+        bytes32 respHash = keccak256(abi.encode(resp));
+        require(responses[respHash]);
 
         bytes32[] memory outputsHashes = new bytes32[](outputs.length);
         for (uint256 i = 0; i < outputs.length; i++) {
