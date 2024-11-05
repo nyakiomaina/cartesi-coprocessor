@@ -54,13 +54,12 @@ contract L2Coprocessor is Coprocessor, Ownable {
 
     // can call callback with the provided outputs after the task is completed
     function callbackWithOutputs(
-        bytes32 machineHash,
-        bytes32 payloadHash,
+        address callbackAddress,
         bytes[] calldata outputs,
-        address callbackAddress
-    ) external onlyOwner {
-        require(responses[machineHash]);
+        Response calldata resp
+    ) public {
+        require(responses[resp.machineHash]);
 
-        ICoprocessorCallback(callbackAddress).coprocessorCallbackOutputsOnly(machineHash, payloadHash, outputs);
+        ICoprocessorCallback(callbackAddress).coprocessorCallbackOutputsOnly(resp.machineHash, resp.payloadHash, outputs);
     }
 }
