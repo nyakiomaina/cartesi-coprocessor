@@ -58,7 +58,14 @@ contract L2Coprocessor is Coprocessor, Ownable {
         bytes[] calldata outputs,
         Response calldata resp
     ) public {
-        require(responses[resp.machineHash]);
+        // bytes32 respHash = keccak256(abi.encode(resp));
+        // require(responses[respHash]);
+
+        bytes32[] memory outputsHashes = new bytes32[](outputs.length);
+        for (uint256 i = 0; i < outputs.length; i++) {
+            outputsHashes[i] = keccak256(outputs[i]);
+        }
+        require(resp.outputMerkle == LibMerkle32.merkleRoot(outputsHashes, 63), "M");
 
         ICoprocessorCallback(callbackAddress).coprocessorCallbackOutputsOnly(resp.machineHash, resp.payloadHash, outputs);
     }
