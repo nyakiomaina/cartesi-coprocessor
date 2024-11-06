@@ -8,8 +8,6 @@ contract L1Coprocessor is Coprocessor {
     IL1CrossDomainMessenger public crossDomainMessenger;
     address public l2Coprocessor;
 
-    event SolutionSubmitted(bytes32 indexed machineHash, bytes32 responseHash);
-
     constructor(address _crossDomainMessenger, IRegistryCoordinator _registryCoordinator)
         Coprocessor(_registryCoordinator)
     {
