@@ -41,13 +41,14 @@ contract L1Coprocessor is Coprocessor {
 
         bytes memory data = abi.encodeWithSignature(
             "storeResponseHash(bytes32)",
-            respHash
+            respHash,
+            msg.sender
         );
 
-        bytes memory message = abi.encode(
-            msg.sender,
-            data
-        );
+        // bytes memory message = abi.encode(
+        //     msg.sender,
+        //     data
+        // );
 
         // relay fee
         uint256 relayFee = l1ScrollMessenger.l2GasPriceOracle().getL2GasPrice() * gasLimit;

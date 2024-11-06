@@ -4,10 +4,9 @@ pragma solidity ^0.8.9;
 import "./ICoprocessorCallback.sol";
 import "./Coprocessor.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./IL2ScrollMessenger.sol";
 
 contract L2Coprocessor is Coprocessor, Ownable {
-    IL2ScrollMessenger public immutable l2ScrollMessenger;
+    address public immutable ALIASED_L1_SCROLL_MESSENGER;
     address public l1Coprocessor;
 
     mapping(bytes32 => bool) public responses;
@@ -15,19 +14,21 @@ contract L2Coprocessor is Coprocessor, Ownable {
     event TaskIssued(bytes32 indexed machineHash, bytes input, address callback);
     event TaskCompleted(bytes32 indexed responseHash);
 
-    constructor(IRegistryCoordinator _registryCoordinator, address _l2ScrollMessenger)
+    constructor(IRegistryCoordinator _registryCoordinator, address _l1ScrollMessengerAddress)
         Coprocessor(_registryCoordinator)
     {
-        l2ScrollMessenger = IL2ScrollMessenger(_l2ScrollMessenger);
+        ALIASED_L1_SCROLL_MESSENGER = address(
+            uint160(_l1ScrollMessengerAddress) + uint160(0x1111000000000000000000000000000000001111)
+        );
     }
 
-    modifier onlyFromL1() {
+    modifier onlyFromL1(address _l1Sender) {
         require(
-            msg.sender == address(l2ScrollMessenger),
+            msg.sender == ALIASED_L1_SCROLL_MESSENGER,
             "Caller is not the L2ScrollMessenger"
         );
         require(
-            l2ScrollMessenger.xDomainMessageSender() == l1Coprocessor,
+            _l1Sender == l1Coprocessor,
             "Message not from authorized L1 contract"
         );
         _;
