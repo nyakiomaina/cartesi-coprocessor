@@ -6,19 +6,8 @@ import "./Coprocessor.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./AddressAliasHelper.sol";
 
-library AddressAliasHelper {
-    uint160 constant offset = uint160(0x1111000000000000000000000000000000001111);
-
-    function applyL1ToL2Alias(address l1Address) internal pure returns (address) {
-        return address(uint160(l1Address) + offset);
-    }
-
-    function undoL1ToL2Alias(address l2Address) internal pure returns (address) {
-        return address(uint160(l2Address) - offset);
-    }
-}
-
 contract L2Coprocessor is Coprocessor, Ownable {
+
     mapping(address => bool) public authorizedL1Senders;
 
     mapping(bytes32 => bool) public responses;
@@ -35,7 +24,7 @@ contract L2Coprocessor is Coprocessor, Ownable {
 
     function authorizeL1Sender(address l1Sender) external onlyOwner {
         address l2Alias = AddressAliasHelper.applyL1ToL2Alias(l1Sender);
-        authorizedL1Senders[AddressAliasHelper.applyL1ToL2Alias(l1Sender)] = true;
+        authorizedL1Senders[l2Alias] = true;
     }
 
     function issueTask(bytes32 machineHash, bytes calldata input, address callback) public {
