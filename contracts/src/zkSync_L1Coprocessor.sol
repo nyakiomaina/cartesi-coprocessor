@@ -29,7 +29,6 @@ contract L1Coprocessor is Coprocessor {
         NonSignerStakesAndSignature calldata nonSignerStakesAndSignature,
         uint256 ergsLimit
     ) external payable returns (bytes32 txHash) {
-        // Perform necessary checks
         check(
             resp,
             quorumNumbers,
@@ -42,25 +41,22 @@ contract L1Coprocessor is Coprocessor {
         bytes memory encodedResp = abi.encode(resp);
         bytes32 respHash = keccak256(encodedResp);
 
-        // Prepare calldata for L2 function call, including the original sender
         bytes memory message = abi.encodeWithSignature(
             "storeResponseHash(bytes32,address)",
             respHash,
-            msg.sender // Include the original sender's address
+            msg.sender
         );
 
-        // Estimate the required fee (in wei)
         uint256 requiredFee = _getRequiredL2GasFee(ergsLimit, message.length);
 
         require(msg.value >= requiredFee, "Insufficient fee for L2 transaction");
 
-        // Send the L2 transaction request via zkSync
         txHash = zkSync.requestL2Transaction{value: msg.value}(
-            l2Coprocessor, // Target contract on L2
-            0,             // L2 call value (amount of ETH to send to L2 contract)
-            message,       // Calldata for L2 function
-            ergsLimit,     // Gas limit (ergs) for L2 execution
-            new bytes // No factory dependencies
+            l2Coprocessor,
+            0,             // l2 call value
+            message,
+            ergsLimit,
+            new bytes
         );
 
         emit MessageSent(txHash, address(zkSync), l2Coprocessor, message);
@@ -71,17 +67,14 @@ contract L1Coprocessor is Coprocessor {
         uint256 _ergsLimit,
         uint256 _calldataLength
     ) internal view returns (uint256) {
-        // Get the L2 gas price from zkSync
         uint256 l2GasPrice = zkSync.getL2GasPrice();
 
-        // Calculate the base cost
         uint256 baseCost = zkSync.l2TransactionBaseCost(
-            tx.gasprice,    // L1 gas price
+            tx.gasprice,
             _ergsLimit,
             _calldataLength
         );
 
-        // The total required fee is the base cost plus the execution cost on L2
         uint256 totalCost = baseCost + (_ergsLimit * l2GasPrice);
 
         return totalCost;
