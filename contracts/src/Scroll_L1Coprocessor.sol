@@ -57,7 +57,7 @@ contract L1Coprocessor is Coprocessor {
 
         l1ScrollMessenger.sendMessage{ value: msg.value }(
             l2Coprocessor,
-            message,
+            data,
             gasLimit
         );
     }
