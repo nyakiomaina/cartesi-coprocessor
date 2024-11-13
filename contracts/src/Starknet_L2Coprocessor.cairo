@@ -167,4 +167,56 @@ namespace L2Coprocessor:
         return ()
     end
 
+    # computeMerkleRoot function
+    func compute_merkle_root{
+        keccak_ptr: felt*,
+        range_check_ptr,
+    }(
+        leaves: felt*,
+        n_leaves: felt
+    ) -> (root: felt):
+        if n_leaves == 0:
+            # Empty tree
+            return (root=0)
+        end
+        if n_leaves == 1:
+            # Single leaf
+            return (root=leaves[0])
+        end
+
+        alloc_locals
+        let next_level_len = (n_leaves + 1) / 2  # Ceiling division
+        let next_level = alloc()
+
+        for i in range(next_level_len):
+            let idx = i * 2
+            let left = leaves[idx]
+            let right = if idx + 1 < n_leaves:
+                leaves[idx + 1]
+            else:
+                leaves[idx]  # Duplicate last leaf if odd number
+            end
+
+            # Hash the pair
+            alloc_locals
+            let pair = alloc()
+            assert pair[0] = left
+            assert pair[1] = right
+            let (hash) = keccak(2, pair)
+            assert next_level[i] = hash
+        end
+
+        # Recursive call
+        let (root) = compute_merkle_root(next_level, next_level_len)
+        return (root)
+    end
+
+    # Helper function to get selector from function name
+    func get_selector(name: felt*) -> (selector: felt):
+        from starkware.cairo.common.hash_chain import compute_hash_on_elements
+        let (selector) = compute_hash_on_elements(name)
+        return (selector)
+    end
+
+
 end
