@@ -1,15 +1,9 @@
 # Compiler files
-contracts/cache/
-contracts/out/
-
-# sample-dapp
-sample-dapp
-
-# setup-operator
-setup-operator/target
+cache/
+out/
 
 # Ignores development broadcast logs
-contracts/broadcast/**
+/broadcast/**
 
 # Docs
 docs/
