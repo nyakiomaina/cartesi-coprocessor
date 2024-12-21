@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "@optimism/L1/IL1CrossDomainMessenger.sol";
-import "@openzeppelin-ownable/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "./L1_OP_Sender.sol";
+//import "../../contracts/src/Coprocessor.sol";
 
-import "../../contracts/src/Coprocessor.sol";
 
 contract L1Coprocessor is Coprocessor, Ownable {
     IL1CrossDomainMessenger public crossDomainMessenger;

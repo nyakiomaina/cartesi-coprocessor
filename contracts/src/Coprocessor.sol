@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
-import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
+import "../lib/eigenlayer-middleware/lib/eigenlayer-contracts/lib/openzeppelin-contracts/contracts/utils/cryptography/MerkleProof.sol";
 import "@openzeppelin-upgrades/contracts/proxy/utils/Initializable.sol";
 import "@openzeppelin-upgrades/contracts/access/OwnableUpgradeable.sol";
-import "@eigenlayer/contracts/permissions/Pausable.sol";
+import "../lib/eigenlayer-middleware/lib/eigenlayer-contracts/src/contracts/permissions/Pausable.sol";
 import "@eigenlayer-middleware/src/interfaces/IServiceManager.sol";
 import {BLSApkRegistry} from "@eigenlayer-middleware/src/BLSApkRegistry.sol";
 import {RegistryCoordinator} from "@eigenlayer-middleware/src/RegistryCoordinator.sol";
@@ -13,6 +13,7 @@ import {OperatorStateRetriever} from "@eigenlayer-middleware/src/OperatorStateRe
 import {LibMerkle32} from "./LibMerkle32.sol";
 import "@eigenlayer-middleware/src/libraries/BN254.sol";
 import "./ICoprocessorCallback.sol";
+
 
 contract Coprocessor is BLSSignatureChecker, OperatorStateRetriever, Initializable, OwnableUpgradeable {
     using BN254 for BN254.G1Point;
