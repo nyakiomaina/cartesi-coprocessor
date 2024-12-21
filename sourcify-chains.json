@@ -1,0 +1,16 @@
+{
+    "31337": {
+      "sourcifyName": "Anvil",
+      "supported": true,
+      "rpc": [
+        "http://anvil:8545"
+      ]
+    },
+    "17000": {
+      "sourcifyName": "Holesky",
+      "supported": true,
+      "rpc": [
+        "http://anvil:8545"
+      ]
+    }
+  }
