@@ -1,7 +1,7 @@
 [profile.default]
 src = "src"
 out = "out"
-libs = ["lib"]
+#libs = ["lib"]
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
 remappings = [
@@ -9,10 +9,6 @@ remappings = [
     "@optimism/=lib/optimism/packages/contracts-bedrock/interfaces",
     "@openzeppelin-ownable/=lib/openzeppelin-contracts/",
     "@eigenlayer-middleware=lib/eigenlayer-middleware/",
-    "@openzeppelin-upgrades=lib/eigenlayer-middleware/lib/eigenlayer-contracts/lib/openzeppelin-contracts-upgradeable/"
-
-
-
-
-
+    "@openzeppelin-upgrades=lib/eigenlayer-middleware/lib/eigenlayer-contracts/lib/openzeppelin-contracts-upgradeable/",
+    "@contracts-initial/=../contracts/src/",
 ]

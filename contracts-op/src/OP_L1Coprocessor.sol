@@ -3,15 +3,13 @@ pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./L1_OP_Sender.sol";
-//import "../../contracts/src/Coprocessor.sol";
 
 
-contract L1Coprocessor is Coprocessor, Ownable {
+contract L1Coprocessor is Ownable {
     IL1CrossDomainMessenger public crossDomainMessenger;
     address public l2Coprocessor;
 
-    constructor(address _crossDomainMessenger, IRegistryCoordinator _registryCoordinator)
-        Coprocessor(_registryCoordinator)
+    constructor(address _crossDomainMessenger)
     {
         crossDomainMessenger = IL1CrossDomainMessenger(_crossDomainMessenger);
     }
