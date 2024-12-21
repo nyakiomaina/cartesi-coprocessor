@@ -1,20 +1,19 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.9;
+pragma solidity 0.8.20;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@optimism/L1/IL1CrossDomainMessenger.sol";
+import "@openzeppelin-ownable/contracts/access/Ownable.sol";
 
-import { ICrossDomainMessenger } from "mantlenetworkio/contracts/contracts/libraries/bridge/ICrossDomainMessenger.sol";
-
-import "./Coprocessor.sol";
+import "../../contracts/src/Coprocessor.sol";
 
 contract L1Coprocessor is Coprocessor, Ownable {
-    ICrossDomainMessenger public crossDomainMessenger;
+    IL1CrossDomainMessenger public crossDomainMessenger;
     address public l2Coprocessor;
 
     constructor(address _crossDomainMessenger, IRegistryCoordinator _registryCoordinator)
         Coprocessor(_registryCoordinator)
     {
-        crossDomainMessenger = ICrossDomainMessenger(_crossDomainMessenger);
+        crossDomainMessenger = IL1CrossDomainMessenger(_crossDomainMessenger);
     }
 
     function setL2Coprocessor(address _l2Coprocessor) external onlyOwner {
@@ -40,7 +39,6 @@ contract L1Coprocessor is Coprocessor, Ownable {
         );
 
         bytes memory encodedResp = abi.encode(resp);
-
         bytes32 respHash = keccak256(encodedResp);
 
         bytes memory message = abi.encodeWithSignature(
@@ -48,10 +46,6 @@ contract L1Coprocessor is Coprocessor, Ownable {
             respHash
         );
 
-        crossDomainMessenger.sendMessage(
-            l2Coprocessor,
-            message,
-            gasLimit
-        );
+        crossDomainMessenger.sendMessage(l2Coprocessor, message, gasLimit);
     }
 }

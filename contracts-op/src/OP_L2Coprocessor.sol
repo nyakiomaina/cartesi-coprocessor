@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.9;
+pragma solidity 0.8.20;
 
-import "./ICoprocessorCallback.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "../../contracts/src/ICoprocessorCallback.sol";
+import "@openzeppelin-ownable/contracts/access/Ownable.sol";
 import "@optimism/L2/IL2CrossDomainMessenger.sol";
-import {LibMerkle32} from "./LibMerkle32.sol";
+import {LibMerkle32} from "../../contracts/src/LibMerkle32.sol";
 
 contract L2Coprocessor is Ownable {
     using LibMerkle32 for bytes32[];
