@@ -1,5 +1,8 @@
 {
   "addresses": {
+    "CoprocessorToL2": "0x82e01223d51Eb87e16A03E24687EDF0F294da6f1",
+    "Mock_L1_Sender": "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575",
+    "Mock_L2Coprocessor": "0x5f3f1dBD7B74C6B46e8c44f98792A1dAf8d69154",
     "apkRegistry": "0xa82fF9aFd8f496c3d6ac40E2a0F282E47488CFc9",
     "apkRegistryImpl": "0x0E801D84Fa97b50751Dbf25036d067dCf18858bF",
     "coprocessor": "0x851356ae760d987E095750cCeb3bC6014560891C",
